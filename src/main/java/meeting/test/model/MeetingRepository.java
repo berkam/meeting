@@ -1,4 +1,4 @@
-package model;
+package meeting.test.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package model;
+package meeting.test.model;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -10,5 +10,6 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Meeting extends AbstractPersistable<Long> {
-    private String time;
+    private String timeBegin;
+    private String timeEnd;
 }

@@ -1,4 +1,4 @@
-package model;
+package meeting.test.model;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
