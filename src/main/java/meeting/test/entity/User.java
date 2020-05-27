@@ -23,5 +23,5 @@ public class User extends AbstractPersistable<Long> {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "meeting_id")}
     )
-    Set<Meeting> meetings = new HashSet<>();
+    private Set<Meeting> meetings = new HashSet<>();
 }

@@ -1,4 +1,4 @@
-package meeting.test.controllers;
+package meeting.test.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import meeting.test.entity.Meeting;
@@ -18,14 +18,9 @@ import java.util.Optional;
 @RestController
 public class MeetingController {
     @Autowired
-    private final MeetingRepository meetingRepository;
+    private MeetingRepository meetingRepository;
     @Autowired
-    private final UserRepository userRepository;
-
-    public MeetingController(MeetingRepository repository, UserRepository userRepository) {
-        this.meetingRepository = repository;
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
 
 
     @PostMapping("/addMeeting")
