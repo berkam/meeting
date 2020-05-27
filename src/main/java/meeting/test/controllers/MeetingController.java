@@ -3,10 +3,11 @@ package meeting.test.controllers;
 import meeting.test.model.Meeting;
 import meeting.test.model.MeetingRepository;
 import meeting.test.model.User;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -18,32 +19,32 @@ public class MeetingController {
         this.repository = repository;
     }
 
-    @GetMapping("/addMeeting")
+    @PostMapping("/addMeeting")
     public String addMeeting(Timestamp timeBegin, Timestamp timeEnd, Set<User> users) {
         repository.save(new Meeting(timeBegin, timeEnd, users));
         return "addMeeting";
     }
 
-    @GetMapping("/cancelMeeting")
+    @PostMapping("/cancelMeeting")
     public String cancelMeeting(long id) {
         repository.deleteById(id);
         return "addMeeting";
     }
 
-    @GetMapping("/addUsers")
+    @PostMapping("/addUsers")
     public String addUsers(String timeBegin, String timeEnd) {
         //repository.save(new Meeting(timeBegin, timeEnd));
         return "addMeeting";
     }
 
-    @GetMapping("/deleteUser")
+    @PostMapping("/deleteUser")
     public String deleteUser(long id) {
         repository.deleteById(id);
         return "addMeeting";
     }
 
-    @GetMapping("/showMeetings")
-    public String showMeetings() {
-        return repository.findAll().toString();
+    @PostMapping("/showMeetings")
+    public List<Meeting> showMeetings() {
+        return repository.findAll();
     }
 }

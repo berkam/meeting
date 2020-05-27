@@ -1,8 +1,6 @@
 package meeting.test.model;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
@@ -12,11 +10,13 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "Meetings")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class Meeting extends AbstractPersistable<Long> {
     private Timestamp timeBegin;
     private Timestamp timeEnd;
