@@ -22,10 +22,9 @@ public class MeetingController {
     @Autowired
     private UserRepository userRepository;
 
-
     @PostMapping("/addMeeting")
-    public String addMeeting(Timestamp timeBegin, Timestamp timeEnd) {
-        Meeting meeting = meetingRepository.save(new Meeting(timeBegin, timeEnd, new HashSet<>()));
+    public String addMeeting(Long timeBegin, Long timeEnd) {
+        Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new HashSet<>()));
         return String.format("addMeeting with id %s", meeting.getId());
     }
 
