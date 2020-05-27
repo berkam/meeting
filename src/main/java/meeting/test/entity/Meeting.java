@@ -1,4 +1,4 @@
-package meeting.test.model;
+package meeting.test.entity;
 
 import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class Meeting extends AbstractPersistable<Long> {
     private Timestamp timeBegin;
     private Timestamp timeEnd;

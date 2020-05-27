@@ -1,8 +1,8 @@
 package meeting.test.controllers;
 
-import meeting.test.model.Meeting;
-import meeting.test.model.MeetingRepository;
-import meeting.test.model.User;
+import meeting.test.entity.Meeting;
+import meeting.test.entity.User;
+import meeting.test.repository.MeetingRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
