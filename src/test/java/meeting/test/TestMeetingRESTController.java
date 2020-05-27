@@ -22,10 +22,49 @@ public class TestMeetingRESTController {
     }
 
     @Test
-    public void createEmployeeAPI() throws Exception {
-
+    public void addMeeting() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
+                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void cancelMeeting() throws Exception {
+        String meetingId = mockMvc.perform(MockMvcRequestBuilders
+                .post("/addMeeting")
+                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/cancelMeeting")
+                .param("meetingId", meetingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void addUsers() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/addUsers")
+                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void deleteUser() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/deleteUser")
                 .param("timeBegin", String.valueOf(System.currentTimeMillis()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

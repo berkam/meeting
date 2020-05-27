@@ -23,15 +23,15 @@ public class MeetingController {
     private UserRepository userRepository;
 
     @PostMapping("/addMeeting")
-    public String addMeeting(Long timeBegin, Long timeEnd) {
+    public Long addMeeting(Long timeBegin, Long timeEnd) {
         Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new HashSet<>()));
-        return String.format("addMeeting with id %s", meeting.getId());
+        return meeting.getId();
     }
 
     @PostMapping("/cancelMeeting")
-    public String cancelMeeting(long id) {
-        meetingRepository.deleteById(id);
-        return String.format("cancelMeeting with id %s", id);
+    public String cancelMeeting(long meetingId) {
+        meetingRepository.deleteById(meetingId);
+        return String.format("cancelMeeting with id %s", meetingId);
     }
 
     @PostMapping("/addUsers")
