@@ -73,9 +73,27 @@ public class TestMeetingRESTController {
 
     @Test
     public void deleteUser() throws Exception {
+        String meetingId = mockMvc.perform(MockMvcRequestBuilders
+                .post("/addMeeting")
+                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        String userId = mockMvc.perform(MockMvcRequestBuilders
+                .post("/addUsers")
+                .param("email", "berkam15@gmail.com")
+                .param("meetingId", meetingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/deleteUser")
-                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .param("userId", userId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
