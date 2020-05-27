@@ -62,7 +62,7 @@ public class MeetingController {
     }
 
     @PostMapping("/showMeetings")
-    public List<Meeting> showMeetings() {
-        return meetingRepository.findAll();
+    public ResponseEntity<List<Meeting>> showMeetings() {
+        return ResponseEntity.ok(meetingRepository.findAll());
     }
 }
