@@ -39,15 +39,19 @@ public class MeetingController {
         Optional<User> optionalUser = userRepository.findUserByEmail(email);
         User user = optionalUser.orElseGet(() -> new User(email, new HashSet<>()));
 
-        Optional<Meeting> meeting = meetingRepository.findById(meetingId);
+        Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
 
-        if (meeting.isEmpty()) {
+        if (optionalMeeting.isEmpty()) {
             log.error("Error meeting not found");
             return "Error meeting not found";
         }
-        user.getMeetings().add(meeting.get());
+        Meeting meeting = optionalMeeting.get();
+        meeting.getUsers().add(user);
+        meetingRepository.save(meeting);
 
+        user.getMeetings().add(meeting);
         userRepository.save(user);
+
         return "user add";
     }
 
