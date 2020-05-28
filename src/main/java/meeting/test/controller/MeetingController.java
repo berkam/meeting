@@ -6,6 +6,7 @@ import meeting.test.entity.Meeting;
 import meeting.test.entity.User;
 import meeting.test.repository.MeetingRepository;
 import meeting.test.repository.UserRepository;
+import meeting.test.utils.EmploymentChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
@@ -27,10 +28,12 @@ public class MeetingController {
     private UserRepository userRepository;
 
     @PostMapping("/addMeeting")
-    public ResponseEntity<Long> addMeeting(Long timeBegin, Long timeEnd) {
-        Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new HashSet<>()));
-        log.debug(meeting.toString());
-        return ResponseEntity.ok(Objects.requireNonNull(meeting.getId()));
+    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd) {
+        if (timeBegin < timeEnd) {
+            Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new HashSet<>()));
+            log.debug(meeting.toString());
+            return ResponseEntity.ok(Objects.requireNonNull(meeting.getId()));
+        } else return ResponseEntity.badRequest().body("Not correct time");
     }
 
     @PostMapping("/cancelMeeting")
@@ -49,8 +52,12 @@ public class MeetingController {
         }
 
         User user = userRepository.findUserByEmail(email).orElseGet(() -> new User(email, new HashSet<>()));
-
         Meeting meeting = optionalMeeting.get();
+
+        if (!EmploymentChecker.checkUserTime(user, meeting)) {
+            return ResponseEntity.badRequest().body("This user is busy for this time");
+        }
+
         meeting.getUsers().add(user);
         user.getMeetings().add(meeting);
 
