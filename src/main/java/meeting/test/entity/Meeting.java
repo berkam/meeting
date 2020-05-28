@@ -6,8 +6,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,9 +21,9 @@ public class Meeting {
     private Timestamp timeBegin;
     private Timestamp timeEnd;
     @ManyToMany(mappedBy = "meetings")
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 
-    public Meeting(Timestamp timeBegin, Timestamp timeEnd, Set<User> users) {
+    public Meeting(Timestamp timeBegin, Timestamp timeEnd, List<User> users) {
         this.timeBegin = timeBegin;
         this.timeEnd = timeEnd;
         this.users = users;

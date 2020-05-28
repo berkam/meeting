@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -30,7 +27,7 @@ public class MeetingController {
     @PostMapping("/addMeeting")
     public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd) {
         if (timeBegin < timeEnd) {
-            Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new HashSet<>()));
+            Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new ArrayList<>()));
             log.debug(meeting.toString());
             return ResponseEntity.ok(Objects.requireNonNull(meeting.getId()));
         } else return ResponseEntity.badRequest().body("Not correct time");
@@ -38,7 +35,19 @@ public class MeetingController {
 
     @PostMapping("/cancelMeeting")
     public ResponseEntity<String> cancelMeeting(long meetingId) {
+        Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
+        if (optionalMeeting.isEmpty()) {
+            log.error(String.format("Error: meeting with id %s not found", meetingId));
+            return ResponseEntity.badRequest().build();
+        }
+
+        Meeting meeting = optionalMeeting.get();
+        for (User user : meeting.getUsers()) {
+            user.getMeetings().remove(meeting);
+            userRepository.save(user);
+        }
         meetingRepository.deleteById(meetingId);
+
         log.debug(String.format("Cancel meeting with id %s", meetingId));
         return ResponseEntity.ok(String.format("Cancel meeting with id %s", meetingId));
     }
@@ -74,6 +83,11 @@ public class MeetingController {
 
     @PostMapping("/deleteUser")
     public ResponseEntity<?> deleteUser(long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            log.error(String.format("Error: user with %s not found", userId));
+            return ResponseEntity.badRequest().build();
+        }
         userRepository.deleteById(userId);
         log.debug(String.format("Delete user with id %s", userId));
         return ResponseEntity.ok().build();

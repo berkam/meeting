@@ -29,7 +29,7 @@
 ## API Documentation
 
 ### Поставить встречу 
-Метод "/addMeeting". Принимаемые параметры: long timeBegin, long timeEnd.
+Метод "/addMeeting". Принимаемые параметры: long timeBegin, long timeEnd - это время в формате Timestamp.
 Данный метод создает встречу.
 
 ### Отменить встречу 

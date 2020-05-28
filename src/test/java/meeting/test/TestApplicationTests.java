@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,7 +22,7 @@ class TestApplicationTests {
         long millis = System.currentTimeMillis();
         Timestamp ts = new Timestamp(millis);
 
-        Set<User> users = new HashSet<>();
+        List<User> users = new ArrayList<>();
 
         Meeting meeting = new Meeting(ts, ts, users);
         assertEquals(0, meeting.getUsers().size());

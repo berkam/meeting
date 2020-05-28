@@ -72,6 +72,34 @@ public class TestMeetingRESTController {
     }
 
     @Test
+    public void incorrectEmail() throws Exception {
+        String meetingId = mockMvc.perform(MockMvcRequestBuilders
+                .post("/addMeeting")
+                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/addUser")
+                .param("email", "berkam15gmail.com")
+                .param("meetingId", meetingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/addUser")
+                .param("email", "berkam@15gmail.")
+                .param("meetingId", meetingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     public void deleteUser() throws Exception {
         String meetingId = mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
@@ -83,7 +111,7 @@ public class TestMeetingRESTController {
                 .andReturn().getResponse().getContentAsString();
 
         String userId = mockMvc.perform(MockMvcRequestBuilders
-                .post("/addUsers")
+                .post("/addUser")
                 .param("email", "berkam15@gmail.com")
                 .param("meetingId", meetingId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -94,6 +122,34 @@ public class TestMeetingRESTController {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/deleteUser")
                 .param("userId", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void cancelMeetingWithUser() throws Exception {
+        String meetingId = mockMvc.perform(MockMvcRequestBuilders
+                .post("/addMeeting")
+                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        String userId = mockMvc.perform(MockMvcRequestBuilders
+                .post("/addUser")
+                .param("email", "berkam15@gmail.com")
+                .param("meetingId", meetingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/cancelMeeting")
+                .param("meetingId", meetingId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
