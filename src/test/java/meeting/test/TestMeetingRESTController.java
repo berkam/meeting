@@ -63,7 +63,7 @@ public class TestMeetingRESTController {
                 .andReturn().getResponse().getContentAsString();
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/addUsers")
+                .post("/addUser")
                 .param("email", "berkam15@gmail.com")
                 .param("meetingId", meetingId)
                 .contentType(MediaType.APPLICATION_JSON)

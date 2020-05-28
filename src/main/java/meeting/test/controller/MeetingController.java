@@ -43,7 +43,7 @@ public class MeetingController {
         return ResponseEntity.ok(String.format("Cancel meeting with id %s", meetingId));
     }
 
-    @PostMapping("/addUsers")
+    @PostMapping("/addUser")
     public ResponseEntity<?> addUsers(String email, long meetingId) {
         Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
         if (optionalMeeting.isEmpty()) {
