@@ -4,8 +4,6 @@ import lombok.Data;
 import meeting.test.entity.User;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,13 +19,5 @@ public class UserDTO {
         userDTO.setEmail(user.getEmail());
         userDTO.setMeetingsId(user.getMeetings().stream().map(AbstractPersistable::getId).collect(Collectors.toSet()));
         return userDTO;
-    }
-
-    public static List<UserDTO> of(List<User> userList) {
-        List<UserDTO> userDTOS = new ArrayList<>();
-        for (User user : userList) {
-            userDTOS.add(of(user));
-        }
-        return userDTOS;
     }
 }

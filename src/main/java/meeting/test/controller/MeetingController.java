@@ -8,6 +8,7 @@ import meeting.test.repository.MeetingRepository;
 import meeting.test.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +39,7 @@ public class MeetingController {
     }
 
     @PostMapping("/addUsers")
-    public ResponseEntity<Long> addUsers(String email, long meetingId) {
+    public ResponseEntity<?> addUsers(String email, long meetingId) {
         Optional<User> optionalUser = userRepository.findUserByEmail(email);
         User user = optionalUser.orElseGet(() -> new User(email, new HashSet<>()));
 
@@ -50,10 +51,14 @@ public class MeetingController {
         }
         Meeting meeting = optionalMeeting.get();
         meeting.getUsers().add(user);
-        meetingRepository.save(meeting);
-
         user.getMeetings().add(meeting);
-        return ResponseEntity.ok(Objects.requireNonNull(userRepository.save(user).getId()));
+        try {
+            Long user1 = userRepository.save(user).getId();
+            meetingRepository.save(meeting);
+            return ResponseEntity.ok(Objects.requireNonNull(user1));
+        } catch (TransactionSystemException exception) {
+            return ResponseEntity.badRequest().body("Not correct email");
+        }
     }
 
     @PostMapping("/deleteUser")

@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 @Table(name = "Users")
 @ToString(exclude = "meetings")
 public class User extends AbstractPersistable<Long> {
+    @Email
     private String email;
 
     @ManyToMany(cascade = {CascadeType.ALL})
