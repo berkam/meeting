@@ -1,6 +1,7 @@
 package meeting.test.dto;
 
 import lombok.Data;
+import lombok.ToString;
 import meeting.test.entity.Meeting;
 import meeting.test.entity.User;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@ToString
 public class MeetingDTO {
     private Long id;
     private Timestamp timeBegin;

@@ -29,34 +29,38 @@ public class MeetingController {
     @PostMapping("/addMeeting")
     public ResponseEntity<Long> addMeeting(Long timeBegin, Long timeEnd) {
         Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new HashSet<>()));
+        log.debug(meeting.toString());
         return ResponseEntity.ok(Objects.requireNonNull(meeting.getId()));
     }
 
     @PostMapping("/cancelMeeting")
     public ResponseEntity<String> cancelMeeting(long meetingId) {
         meetingRepository.deleteById(meetingId);
-        return ResponseEntity.ok(String.format("cancelMeeting with id %s", meetingId));
+        log.debug(String.format("Cancel meeting with id %s", meetingId));
+        return ResponseEntity.ok(String.format("Cancel meeting with id %s", meetingId));
     }
 
     @PostMapping("/addUsers")
     public ResponseEntity<?> addUsers(String email, long meetingId) {
-        Optional<User> optionalUser = userRepository.findUserByEmail(email);
-        User user = optionalUser.orElseGet(() -> new User(email, new HashSet<>()));
-
         Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
-
         if (optionalMeeting.isEmpty()) {
-            log.error("Error meeting not found");
+            log.error(String.format("Error: meeting with %s not found", meetingId));
             return ResponseEntity.badRequest().build();
         }
+
+        User user = userRepository.findUserByEmail(email).orElseGet(() -> new User(email, new HashSet<>()));
+
         Meeting meeting = optionalMeeting.get();
         meeting.getUsers().add(user);
         user.getMeetings().add(meeting);
+
         try {
-            Long user1 = userRepository.save(user).getId();
+            Long userId = userRepository.save(user).getId();
             meetingRepository.save(meeting);
-            return ResponseEntity.ok(Objects.requireNonNull(user1));
+            log.debug(String.format("User added: %s", user.toString()));
+            return ResponseEntity.ok(Objects.requireNonNull(userId));
         } catch (TransactionSystemException exception) {
+            log.error(String.format("Not correct email: %s", user.getEmail()));
             return ResponseEntity.badRequest().body("Not correct email");
         }
     }
@@ -64,11 +68,14 @@ public class MeetingController {
     @PostMapping("/deleteUser")
     public ResponseEntity<?> deleteUser(long userId) {
         userRepository.deleteById(userId);
+        log.debug(String.format("Delete user with id %s", userId));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/showMeetings")
     public ResponseEntity<List<MeetingDTO>> showMeetings() {
-        return ResponseEntity.ok(MeetingDTO.of(meetingRepository.findAll()));
+        List<MeetingDTO> meetingDTOS = MeetingDTO.of(meetingRepository.findAll());
+        log.debug(meetingDTOS.toString());
+        return ResponseEntity.ok(meetingDTOS);
     }
 }

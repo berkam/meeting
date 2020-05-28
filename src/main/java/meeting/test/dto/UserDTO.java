@@ -1,6 +1,7 @@
 package meeting.test.dto;
 
 import lombok.Data;
+import lombok.ToString;
 import meeting.test.entity.User;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -8,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
+@ToString
 public class UserDTO {
     private Long id;
     private String email;
