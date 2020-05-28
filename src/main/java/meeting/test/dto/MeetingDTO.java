@@ -12,16 +12,27 @@ import java.util.Set;
 
 @Data
 public class MeetingDTO {
-    private final Set<User> users = new HashSet<>();
     private Long id;
     private Timestamp timeBegin;
     private Timestamp timeEnd;
+    private Set<UserDTO> users = new HashSet<>();
 
-    public List<MeetingDTO> getMeetingDTOList(List<Meeting> meetingList) {
-        List<MeetingDTO> meetingDTOList = new ArrayList<>();
-        for (Meeting meeting : meetingList) {
-
+    public static MeetingDTO of(Meeting meeting) {
+        MeetingDTO meetingDTO = new MeetingDTO();
+        meetingDTO.setId(meeting.getId());
+        meetingDTO.setTimeBegin(meeting.getTimeBegin());
+        meetingDTO.setTimeEnd(meeting.getTimeEnd());
+        for (User user : meeting.getUsers()) {
+            meetingDTO.getUsers().add(UserDTO.of(user));
         }
-        return meetingDTOList;
+        return meetingDTO;
+    }
+
+    public static List<MeetingDTO> of(List<Meeting> meetingList) {
+        List<MeetingDTO> meetingDTOS = new ArrayList<>();
+        for (Meeting meeting : meetingList) {
+            meetingDTOS.add(of(meeting));
+        }
+        return meetingDTOS;
     }
 }

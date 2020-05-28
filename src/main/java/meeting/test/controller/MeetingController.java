@@ -1,6 +1,7 @@
 package meeting.test.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import meeting.test.dto.MeetingDTO;
 import meeting.test.entity.Meeting;
 import meeting.test.entity.User;
 import meeting.test.repository.MeetingRepository;
@@ -62,7 +63,7 @@ public class MeetingController {
     }
 
     @PostMapping("/showMeetings")
-    public ResponseEntity<List<Meeting>> showMeetings() {
-        return ResponseEntity.ok(meetingRepository.findAll());
+    public ResponseEntity<List<MeetingDTO>> showMeetings() {
+        return ResponseEntity.ok(MeetingDTO.of(meetingRepository.findAll()));
     }
 }
