@@ -26,7 +26,7 @@ public class TestMeetingRESTController {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
                 .param("timeBegin", String.valueOf(System.currentTimeMillis()))
-                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
@@ -37,7 +37,7 @@ public class TestMeetingRESTController {
         String meetingId = mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
                 .param("timeBegin", String.valueOf(System.currentTimeMillis()))
-                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -56,7 +56,7 @@ public class TestMeetingRESTController {
         String meetingId = mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
                 .param("timeBegin", String.valueOf(System.currentTimeMillis()))
-                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -76,7 +76,7 @@ public class TestMeetingRESTController {
         String meetingId = mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
                 .param("timeBegin", String.valueOf(System.currentTimeMillis()))
-                .param("timeEnd", String.valueOf(System.currentTimeMillis()))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

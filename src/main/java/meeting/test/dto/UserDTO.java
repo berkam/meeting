@@ -2,8 +2,8 @@ package meeting.test.dto;
 
 import lombok.Data;
 import lombok.ToString;
+import meeting.test.entity.Meeting;
 import meeting.test.entity.User;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ public class UserDTO {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
-        userDTO.setMeetingsId(user.getMeetings().stream().map(AbstractPersistable::getId).collect(Collectors.toSet()));
+        userDTO.setMeetingsId(user.getMeetings().stream().map(Meeting::getId).collect(Collectors.toSet()));
         return userDTO;
     }
 }

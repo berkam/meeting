@@ -1,11 +1,10 @@
 package meeting.test.entity;
 
-import lombok.*;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +13,19 @@ import java.util.Set;
 @Entity
 @Table(name = "Meetings")
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper = false)
-public class Meeting extends AbstractPersistable<Long> {
+public class Meeting {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private Timestamp timeBegin;
     private Timestamp timeEnd;
     @ManyToMany(mappedBy = "meetings")
     private Set<User> users = new HashSet<>();
+
+    public Meeting(Timestamp timeBegin, Timestamp timeEnd, Set<User> users) {
+        this.timeBegin = timeBegin;
+        this.timeEnd = timeEnd;
+        this.users = users;
+    }
 }

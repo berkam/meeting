@@ -1,7 +1,9 @@
 package meeting.test.entity;
 
-import lombok.*;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -11,11 +13,13 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false, exclude = "meetings")
 @Table(name = "Users")
 @ToString(exclude = "meetings")
-public class User extends AbstractPersistable<Long> {
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @Email
     private String email;
 
@@ -26,4 +30,9 @@ public class User extends AbstractPersistable<Long> {
             inverseJoinColumns = {@JoinColumn(name = "meeting_id")}
     )
     private Set<Meeting> meetings = new HashSet<>();
+
+    public User(@Email String email, Set<Meeting> meetings) {
+        this.email = email;
+        this.meetings = meetings;
+    }
 }
