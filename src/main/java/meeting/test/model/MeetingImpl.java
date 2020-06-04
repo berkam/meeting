@@ -13,9 +13,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionSystemException;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static meeting.test.model.BusinessError.IncorrectTime;
+import static meeting.test.model.BusinessError.*;
 
 @Slf4j
 @Component
@@ -26,20 +30,57 @@ public class MeetingImpl implements MeetingInterface {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> email) {
-        if (TimeChecker.checkCorrectTime(timeBegin, timeEnd)) {
-            Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new ArrayList<>()));
-            log.debug(meeting.toString());
-            return ResponseEntity.ok(Objects.requireNonNull(meeting.getId()));
-        } else return ResponseEntity.badRequest().body(IncorrectTime.description());
+    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> emails) {
+        if (!TimeChecker.checkCorrectTime(timeBegin, timeEnd)) {
+            return ResponseEntity.badRequest().body(IncorrectTime.description());
+        }
+
+        Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new ArrayList<>()));
+        log.debug(meeting.toString());
+
+        return addUsersForMeeting(meeting, emails);
     }
+
+    private List<User> findUsersByEmail(List<String> emails) {
+        return emails.stream()
+                .map(e -> userRepository.findUserByEmail(e).orElseGet(() -> new User(e, new HashSet<>())))
+                .collect(Collectors.toList());
+    }
+
+    private ResponseEntity<?> addUsersForMeeting(Meeting meeting, List<String> emails) {
+        List<User> users = findUsersByEmail(emails);
+
+        for (User user : users) {
+            if (!TimeChecker.checkUserTime(user, meeting)) {
+                return ResponseEntity.badRequest().body(UserBusy.description());
+            }
+        }
+
+        meeting.getUsers().addAll(users);
+        for (User user : users) {
+            user.getMeetings().add(meeting);
+        }
+
+        try {
+            for (User user : users) {
+                userRepository.save(user);
+                log.debug(String.format("User added: %s", user.toString()));
+            }
+            meetingRepository.save(meeting);
+            return ResponseEntity.ok(MeetingDTO.of(meeting));
+        } catch (TransactionSystemException exception) {
+            //log.error(String.format("Not correct email: %s", user.getEmail()));
+            return ResponseEntity.badRequest().body("Not correct email");
+        }
+    }
+
 
     @Override
     public ResponseEntity<String> cancelMeeting(long meetingId) {
         Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
         if (optionalMeeting.isEmpty()) {
             log.error(String.format("Error: meeting with id %s not found", meetingId));
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(MeetingNotExist.description());
         }
 
         Meeting meeting = optionalMeeting.get();
@@ -54,32 +95,15 @@ public class MeetingImpl implements MeetingInterface {
     }
 
     @Override
-    public ResponseEntity<?> addUsers(List<String> email, long meetingId) {
+    public ResponseEntity<?> addUsers(List<String> emails, long meetingId) {
         Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
         if (optionalMeeting.isEmpty()) {
             log.error(String.format("Error: meeting with %s not found", meetingId));
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(MeetingNotExist.description());
         }
 
-        User user = userRepository.findUserByEmail(email).orElseGet(() -> new User(email, new HashSet<>()));
         Meeting meeting = optionalMeeting.get();
-
-        if (!TimeChecker.checkUserTime(user, meeting)) {
-            return ResponseEntity.badRequest().body("This user is busy for this time");
-        }
-
-        meeting.getUsers().add(user);
-        user.getMeetings().add(meeting);
-
-        try {
-            Long userId = userRepository.save(user).getId();
-            meetingRepository.save(meeting);
-            log.debug(String.format("User added: %s", user.toString()));
-            return ResponseEntity.ok(Objects.requireNonNull(userId));
-        } catch (TransactionSystemException exception) {
-            log.error(String.format("Not correct email: %s", user.getEmail()));
-            return ResponseEntity.badRequest().body("Not correct email");
-        }
+        return addUsersForMeeting(meeting, emails);
     }
 
     @Override
