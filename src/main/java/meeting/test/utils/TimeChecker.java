@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmploymentChecker {
+public class TimeChecker {
 
     public static boolean checkUserTime(User user, Meeting meeting) {
         List<Pair<Timestamp, Timestamp>> busyTime = new ArrayList<>();
@@ -26,5 +26,28 @@ public class EmploymentChecker {
                 userIsFree = false;
         }
         return userIsFree;
+    }
+
+    public static boolean checkCorrectTime(long timeBegin, long timeEnd) {
+        return checkBeginTimeBeforeAfterTime(timeBegin, timeEnd) &&
+                checkTimeIsFromFuture(timeBegin, timeEnd) &&
+                checkMeetingMoreTenMinutes(timeBegin, timeEnd) &&
+                checkMeetingLessFourHours(timeBegin, timeEnd);
+    }
+
+    private static boolean checkBeginTimeBeforeAfterTime(long timeBegin, long timeEnd) {
+        return timeBegin < timeEnd;
+    }
+
+    private static boolean checkTimeIsFromFuture(long timeBegin, long timeEnd) {
+        return timeBegin > System.currentTimeMillis() && timeEnd > System.currentTimeMillis();
+    }
+
+    private static boolean checkMeetingMoreTenMinutes(long timeBegin, long timeEnd) {
+        return timeEnd - timeBegin > 60_000; // 10m
+    }
+
+    private static boolean checkMeetingLessFourHours(long timeBegin, long timeEnd) {
+        return timeEnd - timeBegin > 14_400_000; // 4h
     }
 }

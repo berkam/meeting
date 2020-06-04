@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface MeetingInterface {
 
-    ResponseEntity<?> addMeeting(long timeBegin, long timeEnd);
+    ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> email);
 
     ResponseEntity<String> cancelMeeting(long meetingId);
 
-    ResponseEntity<?> addUsers(String email, long meetingId);
+    ResponseEntity<?> addUsers(List<String> email, long meetingId);
 
     ResponseEntity<?> deleteUser(long userId);
 

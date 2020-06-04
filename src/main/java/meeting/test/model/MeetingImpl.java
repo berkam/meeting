@@ -6,7 +6,7 @@ import meeting.test.entity.Meeting;
 import meeting.test.entity.User;
 import meeting.test.repository.MeetingRepository;
 import meeting.test.repository.UserRepository;
-import meeting.test.utils.EmploymentChecker;
+import meeting.test.utils.TimeChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -14,6 +14,8 @@ import org.springframework.transaction.TransactionSystemException;
 
 import java.sql.Timestamp;
 import java.util.*;
+
+import static meeting.test.model.BusinessError.IncorrectTime;
 
 @Slf4j
 @Component
@@ -24,12 +26,12 @@ public class MeetingImpl implements MeetingInterface {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd) {
-        if (timeBegin < timeEnd) {
+    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> email) {
+        if (TimeChecker.checkCorrectTime(timeBegin, timeEnd)) {
             Meeting meeting = meetingRepository.save(new Meeting(new Timestamp(timeBegin), new Timestamp(timeEnd), new ArrayList<>()));
             log.debug(meeting.toString());
             return ResponseEntity.ok(Objects.requireNonNull(meeting.getId()));
-        } else return ResponseEntity.badRequest().body("Not correct time");
+        } else return ResponseEntity.badRequest().body(IncorrectTime.description());
     }
 
     @Override
@@ -52,7 +54,7 @@ public class MeetingImpl implements MeetingInterface {
     }
 
     @Override
-    public ResponseEntity<?> addUsers(String email, long meetingId) {
+    public ResponseEntity<?> addUsers(List<String> email, long meetingId) {
         Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
         if (optionalMeeting.isEmpty()) {
             log.error(String.format("Error: meeting with %s not found", meetingId));
@@ -62,7 +64,7 @@ public class MeetingImpl implements MeetingInterface {
         User user = userRepository.findUserByEmail(email).orElseGet(() -> new User(email, new HashSet<>()));
         Meeting meeting = optionalMeeting.get();
 
-        if (!EmploymentChecker.checkUserTime(user, meeting)) {
+        if (!TimeChecker.checkUserTime(user, meeting)) {
             return ResponseEntity.badRequest().body("This user is busy for this time");
         }
 

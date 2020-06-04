@@ -15,8 +15,8 @@ public class MeetingController {
     private MeetingInterface meetingInterface;
 
     @PostMapping("/addMeeting")
-    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd) {
-        return meetingInterface.addMeeting(timeBegin, timeEnd);
+    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> email) {
+        return meetingInterface.addMeeting(timeBegin, timeEnd, email);
     }
 
     @PostMapping("/cancelMeeting")
@@ -25,7 +25,7 @@ public class MeetingController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<?> addUsers(String email, long meetingId) {
+    public ResponseEntity<?> addUsers(List<String> email, long meetingId) {
         return meetingInterface.addUsers(email, meetingId);
     }
 
