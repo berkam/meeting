@@ -2,15 +2,21 @@ package meeting.test.utils;
 
 import meeting.test.entity.Meeting;
 import meeting.test.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class TimeChecker {
 
-    public static boolean checkUserTime(User user, Meeting meeting) {
+    @Autowired
+    public PropertiesConfiguration propertiesConfiguration;
+
+    public boolean checkUserTime(User user, Meeting meeting) {
         List<Pair<Timestamp, Timestamp>> busyTime = new ArrayList<>();
 
         for (Meeting userMeeting : user.getMeetings()) {
@@ -28,26 +34,26 @@ public class TimeChecker {
         return userIsFree;
     }
 
-    public static boolean checkCorrectTime(long timeBegin, long timeEnd) {
+    public boolean checkCorrectTime(long timeBegin, long timeEnd) {
         return checkBeginTimeBeforeAfterTime(timeBegin, timeEnd) &&
                 checkTimeIsFromFuture(timeBegin, timeEnd) &&
-                checkMeetingMoreTenMinutes(timeBegin, timeEnd) &&
-                checkMeetingLessFourHours(timeBegin, timeEnd);
+                checkMeetingMoreThanMin(timeBegin, timeEnd) &&
+                checkMeetingLessThanMax(timeBegin, timeEnd);
     }
 
-    private static boolean checkBeginTimeBeforeAfterTime(long timeBegin, long timeEnd) {
+    private boolean checkBeginTimeBeforeAfterTime(long timeBegin, long timeEnd) {
         return timeBegin < timeEnd;
     }
 
-    private static boolean checkTimeIsFromFuture(long timeBegin, long timeEnd) {
+    private boolean checkTimeIsFromFuture(long timeBegin, long timeEnd) {
         return timeBegin > System.currentTimeMillis() && timeEnd > System.currentTimeMillis();
     }
 
-    private static boolean checkMeetingMoreTenMinutes(long timeBegin, long timeEnd) {
-        return timeEnd - timeBegin > 60_000; // 10m
+    private boolean checkMeetingMoreThanMin(long timeBegin, long timeEnd) {
+        return timeEnd - timeBegin > propertiesConfiguration.getMinMeetingTime() * 1000 * 60;
     }
 
-    private static boolean checkMeetingLessFourHours(long timeBegin, long timeEnd) {
-        return timeEnd - timeBegin > 14_400_000; // 4h
+    private boolean checkMeetingLessThanMax(long timeBegin, long timeEnd) {
+        return timeEnd - timeBegin > propertiesConfiguration.getMinMeetingTime() * 1000 * 60 * 60;
     }
 }

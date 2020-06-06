@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,7 +16,7 @@ public class MeetingController {
     private MeetingInterface meetingInterface;
 
     @PostMapping("/addMeeting")
-    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> email) {
+    public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, ArrayList<String> email) {
         return meetingInterface.addMeeting(timeBegin, timeEnd, email);
     }
 

@@ -28,10 +28,12 @@ public class MeetingImpl implements MeetingInterface {
     private MeetingRepository meetingRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TimeChecker timeChecker;
 
     @Override
     public ResponseEntity<?> addMeeting(long timeBegin, long timeEnd, List<String> emails) {
-        if (!TimeChecker.checkCorrectTime(timeBegin, timeEnd)) {
+        if (!timeChecker.checkCorrectTime(timeBegin, timeEnd)) {
             return ResponseEntity.badRequest().body(IncorrectTime.description());
         }
 
@@ -51,7 +53,7 @@ public class MeetingImpl implements MeetingInterface {
         List<User> users = findUsersByEmail(emails);
 
         for (User user : users) {
-            if (!TimeChecker.checkUserTime(user, meeting)) {
+            if (!timeChecker.checkUserTime(user, meeting)) {
                 return ResponseEntity.badRequest().body(UserBusy.description());
             }
         }

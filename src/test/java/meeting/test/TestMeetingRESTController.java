@@ -25,8 +25,8 @@ public class TestMeetingRESTController {
     public void addMeeting() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
-                .param("timeBegin", String.valueOf(System.currentTimeMillis()))
-                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 1))
+                .param("timeBegin", String.valueOf(System.currentTimeMillis() + 10000))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 80000))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
