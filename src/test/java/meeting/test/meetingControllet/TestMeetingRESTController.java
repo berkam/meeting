@@ -1,4 +1,4 @@
-package meeting.test;
+package meeting.test.meetingControllet;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,8 @@ public class TestMeetingRESTController {
     public void addMeeting() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/addMeeting")
-                .param("timeBegin", String.valueOf(System.currentTimeMillis() + 10000))
-                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 80000))
+                .param("timeBegin", String.valueOf(System.currentTimeMillis() + 100000))
+                .param("timeEnd", String.valueOf(System.currentTimeMillis() + 800000))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
